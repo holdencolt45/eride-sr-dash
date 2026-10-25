@@ -1,0 +1,6 @@
+{
+  "name": "eride-sr-dash",
+  "private": true,
+  "type": "module",
+  "description": "Phone instrument cluster for an E-Ride Pro SR. No build step."
+}

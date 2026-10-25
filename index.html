@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
+  <meta name="theme-color" content="#000000">
+  <meta name="color-scheme" content="dark">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="SR Dash">
+  <meta name="format-detection" content="telephone=no">
+  <title>E-Ride SR</title>
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="icon" href="./icons/icon-192.png" type="image/png">
+  <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
+  <link rel="stylesheet" href="./css/cluster.css">
+</head>
+<body>
+  <main id="cluster" class="cluster" aria-label="Instrument cluster">
+    <header class="top">
+      <div id="bike-name" class="bike">E-RIDE PRO SR</div>
+      <div id="session-name" class="session"></div>
+      <div class="top-right">
+        <button type="button" id="open-set" class="gear-key" aria-label="Settings">
+          <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+            <path fill="currentColor" d="M19.4 13.5a7.8 7.8 0 0 0 .1-1.5 7.8 7.8 0 0 0-.1-1.5l2-1.6-2-3.4-2.4 1a7.7 7.7 0 0 0-2.6-1.5L14 2h-4l-.4 2.5a7.7 7.7 0 0 0-2.6 1.5l-2.4-1-2 3.4 2 1.6a7.8 7.8 0 0 0-.1 1.5 7.8 7.8 0 0 0 .1 1.5l-2 1.6 2 3.4 2.4-1a7.7 7.7 0 0 0 2.6 1.5L10 22h4l.4-2.5a7.7 7.7 0 0 0 2.6-1.5l2.4 1 2-3.4-2-1.6zM12 15.2A3.2 3.2 0 1 1 12 8.8a3.2 3.2 0 0 1 0 6.4z"/>
+          </svg>
+        </button>
+        <time id="clock" class="clock num"></time>
+      </div>
+    </header>
+
+    <div id="fault-strip" class="fault" role="status"></div>
+
+    <section class="gauges" aria-label="Primary readouts">
+      <div class="gauge gauge-soc" id="soc-gauge" data-tone="none">
+        <div class="meter" id="soc-meter" aria-hidden="true">
+          <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+        </div>
+        <div class="soc-readout">
+          <div class="soc-value-row">
+            <span id="soc-value" class="soc-value num">—</span>
+            <span class="soc-unit">%</span>
+          </div>
+          <div class="label">SOC</div>
+        </div>
+      </div>
+
+      <div class="gauge gauge-range">
+        <div class="label">RANGE</div>
+        <div id="range-value" class="range-value num" aria-live="polite">—</div>
+        <div id="range-unit" class="range-unit">MI</div>
+        <div class="economy">
+          <span id="whmi-value" class="economy-value num">—</span>
+          <span id="whmi-label" class="label">WH/MI</span>
+        </div>
+        <div id="full-pack" class="fullpack"></div>
+      </div>
+
+      <div class="gauge gauge-power" id="power-gauge" hidden>
+        <div class="label">MOTOR</div>
+        <div id="power-value" class="power-value num">—</div>
+        <div id="power-unit" class="power-unit">kW</div>
+        <div class="ticks" id="power-ticks" aria-hidden="true">
+          <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+        </div>
+      </div>
+    </section>
+
+    <section class="metrics" aria-label="Pack, economy, trip">
+      <div class="metric">
+        <div id="voltage-value" class="value num">—</div>
+        <div class="label">VOLTS</div>
+      </div>
+      <div class="metric">
+        <div id="trip-value" class="value num">0.0</div>
+        <div class="label">TRIP</div>
+      </div>
+      <div class="metric">
+        <div id="odo-value" class="value num">—</div>
+        <div class="label">ODO</div>
+      </div>
+    </section>
+
+    <footer class="foot">
+      <p class="secondary">
+        <span id="ridden-value">0.0</span> mi ridden
+        · <span id="wh-used-value">—</span> Wh
+        · est. <span id="pack-kwh">3.0</span> kWh
+        · updated <span id="updated-value">—</span>
+      </p>
+      <button type="button" id="open-log" class="log-key">LOG</button>
+    </footer>
+    <p class="rotate-hint">ROTATE</p>
+  </main>
+
+  <section id="log-sheet" class="log-sheet" aria-hidden="true" inert aria-labelledby="log-title">
+    <form id="log-form" class="log-form" autocomplete="off">
+      <div class="log-top">
+        <h1 id="log-title">LOG</h1>
+      </div>
+
+      <div class="log-grid">
+        <label class="field">
+          <span class="label">ODO MI</span>
+          <input id="odo-input" class="num" inputmode="decimal" enterkeyhint="next" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false">
+        </label>
+        <label class="field">
+          <span class="label">SOC %</span>
+          <input id="soc-input" class="num" inputmode="decimal" enterkeyhint="next" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false">
+        </label>
+        <label class="field">
+          <span class="label">VOLTS</span>
+          <input id="volts-input" class="num" inputmode="decimal" enterkeyhint="next" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="—">
+        </label>
+      </div>
+
+      <div class="log-secondary">
+        <label class="field field-grow">
+          <span class="label">WARNING</span>
+          <input id="fault-input" enterkeyhint="done" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" maxlength="64">
+        </label>
+      </div>
+
+      <p id="log-error" class="log-error" role="alert"></p>
+
+      <div class="log-actions">
+        <button type="submit" id="save-log" class="save-key">SAVE</button>
+        <button type="button" id="close-log" class="back-key">BACK</button>
+      </div>
+      <p class="log-note">STORED ON THIS PHONE</p>
+    </form>
+  </section>
+
+  <section id="set-sheet" class="log-sheet" aria-hidden="true" inert aria-labelledby="set-title">
+    <form id="set-form" class="log-form" autocomplete="off">
+      <div class="log-top">
+        <h1 id="set-title">SET</h1>
+        <button type="button" id="new-ride" class="text-key">NEW RIDE</button>
+      </div>
+      <label class="field field-small">
+        <span class="label">PACK Wh EST.</span>
+        <input id="pack-wh-input" class="num" inputmode="numeric" enterkeyhint="done" autocomplete="off" autocapitalize="off" spellcheck="false">
+      </label>
+      <div>
+        <div class="label">MODE</div>
+        <div class="modes" id="mode-keys">
+          <button type="button" data-mode="Sport">SPORT</button>
+          <button type="button" data-mode="Race">RACE</button>
+          <button type="button" data-mode="Eco">ECO</button>
+          <button type="button" data-mode="Park">PARK</button>
+        </div>
+      </div>
+      <p id="set-error" class="log-error" role="alert"></p>
+      <div class="log-actions">
+        <button type="submit" id="save-set" class="save-key">SAVE</button>
+        <button type="button" id="close-set" class="back-key">BACK</button>
+      </div>
+      <p class="log-note">72V 50Ah ESTIMATE · NOT MEASURED</p>
+    </form>
+  </section>
+
+  <noscript><p class="noscript">This dash needs JavaScript.</p></noscript>
+  <script type="module" src="./js/app.js"></script>
+</body>
+</html>
